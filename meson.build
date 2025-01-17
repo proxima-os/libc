@@ -8,8 +8,6 @@ project(
     version: '0.1.0',
 )
 
-fs = import('fs')
-
 compiler = meson.get_compiler('c')
 hydrogen = dependency('hydrogen')
 
