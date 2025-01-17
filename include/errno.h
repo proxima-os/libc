@@ -1,0 +1,39 @@
+#ifndef _ERRNO_H
+#define _ERRNO_H 1
+
+#include <hydrogen/error.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define EACCES ERR_ACCESS_DENIED
+#define EBADF ERR_INVALID_HANDLE
+#define EBUSY ERR_BUSY
+#define EDOM 0x40000000
+#define EEXIST ERR_ALREADY_EXISTS
+#define EFAULT ERR_INVALID_POINTER
+#define EINVAL ERR_INVALID_ARGUMENT
+#define EISDIR ERR_IS_A_DIRECTORY
+#define ELOOP ERR_TOO_MANY_SYMLINKS
+#define EMFILE ERR_NO_MORE_HANDLES
+#define ENAMETOOLONG ERR_NAME_TOO_LONG
+#define ENOENT ERR_NOT_FOUND
+#define ENOEXEC ERR_INVALID_IMAGE
+#define ENOMEM ERR_OUT_OF_MEMORY
+#define ENOSPC ERR_DISK_FULL
+#define ENOSYS ERR_NOT_IMPLEMENTED
+#define ENOTDIR ERR_NOT_A_DIRECTORY
+#define ENOTEMPTY ERR_NOT_EMPTY
+#define EOVERFLOW ERR_OVERFLOW
+#define ERANGE 0x40000001
+#define EXDEV ERR_DIFFERENT_FILESYSTEMS
+
+extern int __errno;
+#define errno __errno
+
+#ifdef __cplusplus
+};
+#endif
+
+#endif /* _ERRNO_H */

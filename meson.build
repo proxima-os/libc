@@ -18,8 +18,15 @@ inc = [include_directories('include')]
 add_project_link_arguments('-nostdlib', language: 'c')
 
 subdir('crt')
-subdir('src')
+subdir('libc')
 subdir('rtld')
+
+libc = shared_library(
+    'c',
+    dependencies: hydrogen,
+    install: true,
+    objects: libc_static.extract_all_objects(recursive: true),
+)
 
 executable(
     'init',

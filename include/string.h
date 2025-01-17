@@ -5,11 +5,35 @@
 #define __need_NULL
 #include <stddef.h>
 
-int memcmp(const void *s1, const void *s2, size_t n);
-void *memcpy(void *restrict dest, const void *restrict src, size_t n);
-void *memmove(void *dest, const void *src, size_t n);
-void *memset(void *dest, int value, size_t n);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-int strcmp(const char *s1, const char *s2);
+void *memcpy(void *__s1, const void *__s2, size_t __n);
+void *memmove(void *__s1, const void *__s2, size_t __n);
+char *strcpy(char *__s1, const char *__s2);
+char *strncpy(char *__s1, const char *__s2, size_t __n);
+char *strcat(char *__s1, const char *__s2);
+char *strncat(char *__s1, const char *__s2, size_t __n);
+int memcmp(const void *__s1, const void *__s2, size_t __n);
+int strcmp(const char *__s1, const char *__s2);
+int strcoll(const char *__s1, const char *__s2);
+int strncmp(const char *__s1, const char *__s2, size_t __n);
+size_t strxfrm(char *__s1, const char *__s2, size_t __n);
+void *memchr(const void *__s, int __c, size_t __n);
+char *strchr(const char *__s, int __c);
+size_t strcspn(const char *__s1, const char *__s2);
+char *strpbrk(const char *__s1, const char *__s2);
+char *strrchr(const char *__s, int __c);
+size_t strspn(const char *__s1, const char *__s2);
+char *strstr(const char *__s1, const char *__s2);
+char *strtok(char *__s1, const char *__s2);
+void *memset(void *__s, int __c, size_t __n);
+char *strerror(int __errnum);
+size_t strlen(const char *__s);
 
-#endif // _STRING_H
+#ifdef __cplusplus
+};
+#endif
+
+#endif /* _STRING_H */

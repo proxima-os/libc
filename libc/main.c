@@ -1,9 +1,11 @@
 #include "auxv.h"
 #include "compiler.h"
-#include "hydrogen/sched.h"
-#include "hydrogen/vfs.h"
+#include "stdio.p.h"
+#include "stdlib.p.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 __attribute__((used)) EXPORT _Noreturn void __libc_start(
         int (*main)(int, char **, char **),
@@ -16,15 +18,19 @@ __attribute__((used)) EXPORT _Noreturn void __libc_start(
     char **argv = &start_info[1];
     char **envp = &argv[argc + 1];
 
+    environ = envp;
+
     size_t envc = 0;
     while (envp[envc] != NULL) envc += 1;
     init_auxv(&envp[envc + 1]);
 
-    hydrogen_write(1, "Hello from libc!\n", 17);
+    init_stdio();
+
+    if (exitfn) atexit(exitfn);
 
     initfn();
-    main(argc, argv, envp);
+    int status = main(argc, argv, envp);
     finifn();
 
-    hydrogen_exit();
+    exit(status);
 }

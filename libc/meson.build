@@ -1,0 +1,22 @@
+libc_static = static_library(
+    'c',
+    'ryu/d2s.c',
+    'assert.c',
+    'auxv.c',
+    'ctype.c',
+    'errno.c',
+    'heap.c',
+    'locale.c',
+    'main.c',
+    'printf.c',
+    'scanf.c',
+    'setjmp.S',
+    'signal.c',
+    'stdio.c',
+    'stdlib.c',
+    'string.c',
+    'time.c',
+    c_args: ['-fno-builtin', '-fvisibility=hidden'],
+    dependencies: hydrogen,
+    include_directories: inc
+)

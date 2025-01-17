@@ -1,21 +1,18 @@
-# Need to wrap libc objects in a static library first to be able to use --exclude-libs ALL
-libc_static = static_library(
-    'c',
-    build_by_default: false,
-    dependencies: hydrogen,
-    objects: libc.extract_all_objects(recursive: true),
-)
+version_script = meson.current_source_dir() / 'rtld.lds'
 
 shared_library(
     'ld64',
     'main.c',
+    'start.c',
     'start.S',
-    c_args: ['-fvisibility=hidden'],
+    c_args: ['-ffreestanding'], # If this is not passed, LTO may optimize a standard function into itself
+    dependencies: hydrogen,
     include_directories: inc,
     install: true,
-    link_args: ['-Wl,-Bsymbolic,--exclude-libs=ALL,--entry=rtld_start'],
-    link_with: libc_static,
+    link_args: ['-Wl,--entry=rtld_start', '-Wl,--version-script=' + version_script],
+    link_depends: version_script,
     name_prefix: '',
     sources: crt0,
+    objects: libc_static.extract_all_objects(recursive: true),
     soversion: 1,
 )

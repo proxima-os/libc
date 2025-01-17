@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "elf.h" // for AT_*
+#include "elf.h" /* for AT_* */
 
 unsigned long getauxval(unsigned long tag);
 
@@ -13,4 +13,4 @@ unsigned long getauxval(unsigned long tag);
 };
 #endif
 
-#endif // _SYS_AUXV_H
+#endif /* _SYS_AUXV_H */

@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef uint16_t Elf64_Half;
 typedef uint32_t Elf64_Word;
 typedef int32_t Elf64_Sword;
@@ -107,4 +111,8 @@ typedef struct {
 
 #define STN_UNDEF 0
 
-#endif // _ELF_H
+#ifdef __cplusplus
+};
+#endif
+
+#endif /* _ELF_H */
