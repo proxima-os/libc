@@ -1,4 +1,5 @@
 #include "elf.h"
+#include "object.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
@@ -6,10 +7,15 @@
 static const void *vdso;
 static const void *vdso_strtab;
 static const Elf64_Sym *vdso_symtab;
+static size_t vdso_syment;
 static const Elf64_Word *vdso_buckets;
 static const Elf64_Word *vdso_chains;
 static Elf64_Word vdso_nbuckets;
-static Elf64_Word vdso_nchains;
+
+static void register_soname(object_t *obj, const void *data) {
+    obj->path.data = (void *)data;
+    while (obj->path.data[obj->path.len]) obj->path.len++;
+}
 
 static void setup_vdso(Elf64_auxv_t *auxv) {
     for (Elf64_auxv_t *cur = auxv; cur->a_type != AT_NULL; cur++) {
@@ -32,19 +38,28 @@ static void setup_vdso(Elf64_auxv_t *auxv) {
     }
 
     const Elf64_Word *hash = NULL;
+    Elf64_Xword soname = 0;
 
     for (const Elf64_Dyn *cur = dynamic; cur->d_tag != DT_NULL; cur++) {
         switch (cur->d_tag) {
         case DT_HASH: hash = vdso + cur->d_un.d_ptr; break;
         case DT_STRTAB: vdso_strtab = vdso + cur->d_un.d_ptr; break;
         case DT_SYMTAB: vdso_symtab = vdso + cur->d_un.d_ptr; break;
+        case DT_SYMENT: vdso_syment = cur->d_un.d_val; break;
+        case DT_SONAME: soname = cur->d_un.d_val; break;
         }
     }
 
     vdso_nbuckets = hash[0];
-    vdso_nchains = hash[1];
     vdso_buckets = &hash[2];
     vdso_chains = &hash[2 + vdso_nbuckets];
+
+    vdso_object.dynamic = dynamic;
+    vdso_object.slide = (intptr_t)vdso;
+
+    if (soname) {
+        register_soname(&vdso_object, vdso_strtab + soname);
+    }
 }
 
 static Elf64_Word elf_hash(const unsigned char *name) {
@@ -69,7 +84,7 @@ static const Elf64_Sym *get_vdso_sym(const void *name) {
     Elf64_Word index = vdso_buckets[hash % vdso_nbuckets];
 
     while (index != STN_UNDEF) {
-        const Elf64_Sym *sym = &vdso_symtab[index];
+        const Elf64_Sym *sym = (void *)vdso_symtab + index * vdso_syment;
         const unsigned char *s1 = vdso_strtab + sym->st_name;
         const unsigned char *s2 = name;
 
@@ -91,15 +106,16 @@ typedef struct {
     intptr_t slide;
     const void *strtab;
     const Elf64_Sym *symtab;
+    size_t syment;
 } relocation_ctx_t;
 
 static uintptr_t get_symbol(relocation_ctx_t *ctx, Elf64_Xword info) {
     Elf64_Word index = ELF64_R_SYM(info);
     if (index == STN_UNDEF) return 0;
 
-    const Elf64_Sym *sym = &ctx->symtab[index];
+    const Elf64_Sym *sym = (void *)ctx->symtab + ctx->syment * index;
 
-    if (sym->st_shndx == SHN_UNDEF) {
+    if (sym->st_value == 0) {
         return (uintptr_t)vdso + get_vdso_sym(ctx->strtab + sym->st_name)->st_value;
     } else {
         return sym->st_value + ctx->slide;
@@ -146,6 +162,7 @@ static void relocate_self(Elf64_auxv_t *auxv, Elf64_Dyn *dynamic) {
     size_t relaent = 0;
     size_t pltrelsz = 0;
     const void *jmprel = NULL;
+    Elf64_Xword soname = 0;
 
     for (Elf64_Dyn *cur = dynamic; cur->d_tag != DT_NULL; cur++) {
         switch (cur->d_tag) {
@@ -155,12 +172,21 @@ static void relocate_self(Elf64_auxv_t *auxv, Elf64_Dyn *dynamic) {
         case DT_STRTAB: ctx.strtab = (const void *)(cur->d_un.d_ptr + ctx.slide); break;
         case DT_SYMTAB: ctx.symtab = (const void *)(cur->d_un.d_ptr + ctx.slide); break;
         case DT_PLTRELSZ: pltrelsz = cur->d_un.d_val; break;
+        case DT_SYMENT: ctx.syment = cur->d_un.d_val; break;
+        case DT_SONAME: soname = cur->d_un.d_val; break;
         case DT_JMPREL: jmprel = (const void *)(cur->d_un.d_ptr + ctx.slide); break;
         }
     }
 
     if (rela) do_relocations(&ctx, rela, relaent, relasz);
     if (jmprel) do_relocations(&ctx, jmprel, sizeof(Elf64_Rela), pltrelsz);
+
+    rtld_object.dynamic = dynamic;
+    rtld_object.slide = ctx.slide;
+
+    if (soname) {
+        register_soname(&rtld_object, ctx.strtab + soname);
+    }
 }
 
 // This runs before libc's _start. Its purpose is to ensure the dynamic linker itself has been relocated correctly.

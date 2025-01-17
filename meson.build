@@ -26,6 +26,7 @@ libc = shared_library(
     dependencies: hydrogen,
     install: true,
     objects: libc_static.extract_all_objects(recursive: true),
+    soversion: 1,
 )
 
 executable(

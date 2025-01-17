@@ -3,6 +3,7 @@ version_script = meson.current_source_dir() / 'rtld.lds'
 shared_library(
     'ld64',
     'main.c',
+    'object.c',
     'start.c',
     'start.S',
     c_args: ['-ffreestanding'], # If this is not passed, LTO may optimize a standard function into itself

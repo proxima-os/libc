@@ -49,6 +49,16 @@ typedef struct {
     Elf64_Half e_shstrndx;
 } Elf64_Ehdr;
 
+#define ELFMAG0 0x7f
+#define ELFMAG1 'E'
+#define ELFMAG2 'L'
+#define ELFMAG3 'F'
+#define ELFCLASS64 2
+#define ELFDATA2LSB 1
+#define EV_CURRENT 1
+#define ET_DYN 3
+#define EM_X86_64 62
+
 typedef struct {
     Elf64_Word p_type;
     Elf64_Word p_flags;
@@ -60,7 +70,12 @@ typedef struct {
     Elf64_Xword p_align;
 } Elf64_Phdr;
 
+#define PT_LOAD 1
 #define PT_DYNAMIC 2
+#define PT_PHDR 6
+#define PF_X 1
+#define PF_W 2
+#define PF_R 4
 
 #define SHN_UNDEF 0
 
@@ -73,6 +88,7 @@ typedef struct {
 } Elf64_Dyn;
 
 #define DT_NULL 0
+#define DT_NEEDED 1
 #define DT_PLTRELSZ 2
 #define DT_HASH 4
 #define DT_STRTAB 5
@@ -80,8 +96,12 @@ typedef struct {
 #define DT_RELA 7
 #define DT_RELASZ 8
 #define DT_RELAENT 9
+#define DT_SYMENT 11
+#define DT_SONAME 14
+#define DT_RPATH 15
 #define DT_PLTREL 20
 #define DT_JMPREL 23
+#define DT_RUNPATH 29
 
 typedef struct {
     Elf64_Addr r_offset;
