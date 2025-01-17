@@ -1,0 +1,17 @@
+install_headers(
+    'sys/auxv.h',
+    'assert.h',
+    'ctype.h',
+    'elf.h',
+    'errno.h',
+    'limits.h',
+    'locale.h',
+    'math.h',
+    'setjmp.h',
+    'signal.h',
+    'stdio.h',
+    'stdlib.h',
+    'string.h',
+    'time.h',
+    preserve_path: true,
+)

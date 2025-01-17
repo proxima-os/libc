@@ -18,6 +18,7 @@ add_project_link_arguments('-nostdlib', language: 'c')
 subdir('crt')
 subdir('libc')
 subdir('rtld')
+subdir('include')
 
 libc = shared_library(
     'c',
