@@ -599,6 +599,7 @@ static int parse_specifier(const char *format, printf_spec_t *out) {
 
         if (c == '*') {
             out->precision = OPT_ARG;
+            c = *++format;
         } else {
             out->precision = 0;
 
