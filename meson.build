@@ -27,12 +27,3 @@ libc = shared_library(
     objects: libc_static.extract_all_objects(recursive: true),
     soversion: 1,
 )
-
-executable(
-    'init',
-    'init.c',
-    include_directories: inc,
-    install: true,
-    link_with: libc,
-    sources: crt0,
-)

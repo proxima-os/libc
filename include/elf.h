@@ -131,6 +131,9 @@ typedef struct {
 
 #define STN_UNDEF 0
 
+#define ELF64_ST_BIND(i) ((i) >> 4)
+#define STB_WEAK 2
+
 #ifdef __cplusplus
 };
 #endif

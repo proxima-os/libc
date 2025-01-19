@@ -354,8 +354,13 @@ static uintptr_t get_symbol(object_t *obj, Elf64_Xword info) {
     if (idx == STN_UNDEF) return 0;
 
     const Elf64_Sym *sym = (void *)obj->symtab + idx * obj->syment;
-    sym = search_for_symbol(obj->strtab + sym->st_name, &obj);
-    return sym->st_value + obj->slide;
+    const Elf64_Sym *found = search_for_symbol(obj->strtab + sym->st_name, &obj);
+
+    if (found) return found->st_value + obj->slide;
+    if (ELF64_ST_BIND(sym->st_info) == STB_WEAK) return 0;
+
+    fprintf(stderr, "rtld: failed to find symbol '%s'\n", obj->strtab + sym->st_name);
+    exit(EXIT_FAILURE);
 }
 
 static void do_relocation(object_t *obj, const Elf64_Rela *rel) {
@@ -445,21 +450,29 @@ static uint32_t get_elf_hash(const char *name) {
 
 const Elf64_Sym *search_for_symbol(const char *name, object_t **owner_out) {
     uint32_t hash = get_elf_hash(name);
+    const Elf64_Sym *sym = NULL;
+    object_t *owner = NULL;
 
-    for (object_t *cur = search_first; cur != NULL; cur = cur->search_next) {
-        Elf64_Word idx = cur->hash.buckets[hash % cur->hash.nbuckets];
+    for (object_t *cur_obj = search_first; cur_obj != NULL; cur_obj = cur_obj->search_next) {
+        Elf64_Word idx = cur_obj->hash.buckets[hash % cur_obj->hash.nbuckets];
 
         while (idx != STN_UNDEF) {
-            const Elf64_Sym *sym = (void *)cur->symtab + idx * cur->syment;
+            const Elf64_Sym *cur = (void *)cur_obj->symtab + idx * cur_obj->syment;
 
-            if (sym->st_value != 0 && strcmp(cur->strtab + sym->st_name, name) == 0) {
-                *owner_out = cur;
-                return sym;
+            if (!sym || ELF64_ST_BIND(cur->st_info) != STB_WEAK) {
+                if (cur->st_value != 0 && strcmp(cur_obj->strtab + cur->st_name, name) == 0) {
+                    sym = cur;
+                    owner = cur_obj;
+
+                    if (ELF64_ST_BIND(cur->st_info) != STB_WEAK) goto done;
+                }
             }
 
-            idx = cur->hash.chains[idx];
+            idx = cur_obj->hash.chains[idx];
         }
     }
 
-    return NULL;
+done:
+    *owner_out = owner;
+    return sym;
 }
