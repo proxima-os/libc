@@ -34,7 +34,12 @@ char *asctime(const struct tm *__timeptr);
 char *ctime(const time_t *__timer);
 struct tm *gmtime(const time_t *__timer);
 struct tm *localtime(const time_t *__timer);
-size_t strftime(char *__s, size_t __maxsize, const char *__format, const struct tm *__timeptr);
+size_t strftime(
+        char *__restrict __s,
+        size_t __maxsize,
+        const char *__restrict __format,
+        const struct tm *__restrict __timeptr
+);
 
 #ifdef __cplusplus
 };

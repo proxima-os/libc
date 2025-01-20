@@ -731,7 +731,7 @@ static bool file_sink(const void *data, size_t size, void *ctx) {
     return fwrite(data, 1, size, ctx) == size;
 }
 
-EXPORT int fprintf(FILE *stream, const char *format, ...) {
+EXPORT int fprintf(FILE *restrict stream, const char *restrict format, ...) {
     va_list args;
     va_start(args, format);
     int ret = do_printf(file_sink, stream, format, args);
@@ -739,7 +739,7 @@ EXPORT int fprintf(FILE *stream, const char *format, ...) {
     return ret;
 }
 
-EXPORT int printf(const char *format, ...) {
+EXPORT int printf(const char *restrict format, ...) {
     va_list args;
     va_start(args, format);
     int ret = do_printf(file_sink, stdout, format, args);
@@ -754,25 +754,25 @@ static bool string_sink(const void *data, size_t size, void *ctx) {
     return true;
 }
 
-EXPORT int sprintf(char *s, const char *format, ...) {
+EXPORT int sprintf(char *restrict s, const char *restrict format, ...) {
     va_list args;
     va_start(args, format);
-    int ret = do_printf(string_sink, &s, format, args);
+    int ret = do_printf(string_sink, (char **)&s, format, args);
     va_end(args);
     if (ret >= 0) *s = 0;
     return ret;
 }
 
-EXPORT int vfprintf(FILE *stream, const char *format, va_list arg) {
+EXPORT int vfprintf(FILE *restrict stream, const char *restrict format, va_list arg) {
     return do_printf(file_sink, stream, format, arg);
 }
 
-EXPORT int vprintf(const char *format, va_list arg) {
+EXPORT int vprintf(const char *restrict format, va_list arg) {
     return do_printf(file_sink, stdout, format, arg);
 }
 
-EXPORT int vsprintf(char *s, const char *format, va_list arg) {
-    int ret = do_printf(string_sink, s, format, arg);
+EXPORT int vsprintf(char *restrict s, const char *restrict format, va_list arg) {
+    int ret = do_printf(string_sink, (char **)&s, format, arg);
     if (ret >= 0) *s = 0;
     return ret;
 }

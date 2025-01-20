@@ -127,7 +127,7 @@ EXPORT int strncmp(const char *s1, const char *s2, size_t n) {
     return 0;
 }
 
-EXPORT size_t strxfrm(char *s1, const char *s2, size_t n) {
+EXPORT size_t strxfrm(char *restrict s1, const char *restrict s2, size_t n) {
     size_t len = 0;
 
     for (;;) {
@@ -229,7 +229,7 @@ EXPORT char *strstr(const char *s1, const char *s2) {
     }
 }
 
-EXPORT char *strtok(char *s1, const char *s2) {
+EXPORT char *strtok(char *restrict s1, const char *restrict s2) {
     static char *state;
     char *cur = s1 ? s1 : state;
 

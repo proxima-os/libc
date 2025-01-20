@@ -264,7 +264,8 @@ static int tmod(int dividend, int divisor) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wformat-overflow"
 
-EXPORT size_t strftime(char *s, size_t maxsize, const char *format, const struct tm *timeptr) {
+EXPORT size_t
+strftime(char *restrict s, size_t maxsize, const char *restrict format, const struct tm *restrict timeptr) {
     // TODO: Locale support
     size_t offset = 0;
 

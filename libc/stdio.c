@@ -156,24 +156,24 @@ static FILE *open_into(FILE *stream, const char *filename, const char *mode) {
     return stream;
 }
 
-EXPORT FILE *fopen(const char *filename, const char *mode) {
+EXPORT FILE *fopen(const char *restrict filename, const char *restrict mode) {
     FILE *stream = malloc(sizeof(*stream));
     if (!stream) return NULL;
 
     return open_into(stream, filename, mode);
 }
 
-EXPORT FILE *freopen(const char *filename, const char *mode, FILE *stream) {
+EXPORT FILE *freopen(const char *restrict filename, const char *restrict mode, FILE *restrict stream) {
     do_close(stream);
     return open_into(stream, filename, mode);
 }
 
-EXPORT void setbuf(FILE *stream, char *buf) {
+EXPORT void setbuf(FILE *restrict stream, char *restrict buf) {
     UNUSED int ret = setvbuf(stream, buf, buf ? _IOFBF : _IONBF, BUFSIZ);
     assert(ret == 0);
 }
 
-EXPORT int setvbuf(UNUSED FILE *stream, UNUSED char *buf, UNUSED int mode, UNUSED size_t size) {
+EXPORT int setvbuf(UNUSED FILE *restrict stream, UNUSED char *restrict buf, UNUSED int mode, UNUSED size_t size) {
     return 0; // TODO: Buffering
 }
 
@@ -182,7 +182,7 @@ EXPORT int fgetc(FILE *stream) {
     return fread(&c, sizeof(c), 1, stream) == 1 ? c : EOF;
 }
 
-EXPORT char *fgets(char *s, int n, FILE *stream) {
+EXPORT char *fgets(char *restrict s, int n, FILE *restrict stream) {
     if (n == 0) return NULL;
 
     char *start = s;
@@ -207,7 +207,7 @@ EXPORT int fputc(int c, FILE *stream) {
     return fwrite(&v, sizeof(v), 1, stream) == 1 ? v : EOF;
 }
 
-EXPORT int fputs(const char *s, FILE *stream) {
+EXPORT int fputs(const char *restrict s, FILE *restrict stream) {
     size_t len = __builtin_strlen(s);
     return fwrite(s, 1, len, stream) == len ? 0 : EOF;
 }
@@ -275,7 +275,7 @@ static hydrogen_io_res_t do_read(FILE *stream, void *buffer, size_t count) {
     return res;
 }
 
-EXPORT size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+EXPORT size_t fread(void *restrict ptr, size_t size, size_t nmemb, FILE *restrict stream) {
     size_t count = size * nmemb;
     if (!count) return 0;
     if (stream->__flags & STREAM_EOF) return 0;
@@ -290,7 +290,7 @@ EXPORT size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
     return res.transferred / size;
 }
 
-EXPORT size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
+EXPORT size_t fwrite(const void *restrict ptr, size_t size, size_t nmemb, FILE *restrict stream) {
     size_t count = size * nmemb;
     if (!count) return 0;
 
@@ -304,7 +304,7 @@ EXPORT size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream) {
     return res.transferred / size;
 }
 
-EXPORT int fgetpos(FILE *stream, fpos_t *pos) {
+EXPORT int fgetpos(FILE *restrict stream, fpos_t *restrict pos) {
     int error = hydrogen_seek(stream->__fd, &pos->__offset, HYDROGEN_WHENCE_CUR);
 
     if (error == 0) {

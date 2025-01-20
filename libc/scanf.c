@@ -500,11 +500,11 @@ static void scanf_file_put(int value, void *ptr) {
     assert(ret == value);
 }
 
-static int vfscanf(FILE *stream, const char *format, va_list args) {
+static int vfscanf(FILE *restrict stream, const char *restrict format, va_list args) {
     return do_scanf((scanf_src_t){scanf_file_get, scanf_file_put}, stream, format, args);
 }
 
-EXPORT int fscanf(FILE *stream, const char *format, ...) {
+EXPORT int fscanf(FILE *restrict stream, const char *restrict format, ...) {
     va_list args;
     va_start(args, format);
     int ret = vfscanf(stream, format, args);
@@ -512,7 +512,7 @@ EXPORT int fscanf(FILE *stream, const char *format, ...) {
     return ret;
 }
 
-EXPORT int scanf(const char *format, ...) {
+EXPORT int scanf(const char *restrict format, ...) {
     va_list args;
     va_start(args, format);
     int ret = vfscanf(stdin, format, args);
@@ -542,7 +542,7 @@ static void scanf_str_put(UNUSED int value, void *ptr) {
     assert((unsigned char)*ctx->cur == value);
 }
 
-EXPORT int sscanf(const char *s, const char *format, ...) {
+EXPORT int sscanf(const char *restrict s, const char *restrict format, ...) {
     scanf_str_ctx_t ctx = {s};
 
     va_list args;

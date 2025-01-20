@@ -119,7 +119,7 @@ static double ipow(double x, int n) {
 }
 
 // TODO: Use a proper decimal-to-binary algorithm, since this isn't particularly accurate
-EXPORT double strtod(const char *nptr, char **endptr) {
+EXPORT double strtod(const char *restrict nptr, char **restrict endptr) {
     fp_parts_t parts = {};
     if (!get_fp_parts(nptr, endptr, &parts)) {
         if (endptr) *endptr = (char *)nptr;
@@ -219,7 +219,7 @@ static bool get_int_parts(const char *nptr, char **endptr, int base, int_parts_t
     }
 }
 
-EXPORT long strtol(const char *nptr, char **endptr, int base) {
+EXPORT long strtol(const char *restrict nptr, char **restrict endptr, int base) {
     int_parts_t parts;
     if (!get_int_parts(nptr, endptr, base, &parts)) return 0;
 
@@ -239,7 +239,7 @@ EXPORT long strtol(const char *nptr, char **endptr, int base) {
     return !parts.negative ? LONG_MAX : LONG_MIN;
 }
 
-EXPORT unsigned long strtoul(const char *nptr, char **endptr, int base) {
+EXPORT unsigned long strtoul(const char *restrict nptr, char **restrict endptr, int base) {
     int_parts_t parts;
     if (!get_int_parts(nptr, endptr, base, &parts)) return 0;
 
@@ -421,7 +421,7 @@ EXPORT int mblen(const char *s, size_t n) {
     return mbtowc(NULL, s, n); // this is ok because mbtowc is stateless
 }
 
-EXPORT int mbtowc(wchar_t *pwc, const char *s, size_t n) {
+EXPORT int mbtowc(wchar_t *restrict pwc, const char *restrict s, size_t n) {
     if (!s) return 0;
     if (n == 0) return -1;
 

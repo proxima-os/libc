@@ -28,9 +28,9 @@ typedef struct {
 double atof(const char *__nptr);
 int atoi(const char *__nptr);
 long atol(const char *__nptr);
-double strtod(const char *__nptr, char **__endptr);
-long strtol(const char *__nptr, char **__endptr, int __base);
-unsigned long strtoul(const char *__nptr, char **__endptr, int __base);
+double strtod(const char *__restrict __nptr, char **__restrict __endptr);
+long strtol(const char *__restrict __nptr, char **__restrict __endptr, int __base);
+unsigned long strtoul(const char *__restrict __nptr, char **__restrict __endptr, int __base);
 int rand(void);
 void srand(unsigned __seed);
 void *calloc(size_t __nmemb, size_t __size);
@@ -55,10 +55,10 @@ div_t div(int __numer, int __denom);
 long labs(long __j);
 ldiv_t ldiv(long __numer, long __denom);
 int mblen(const char *__s, size_t __n);
-int mbtowc(wchar_t *__pwc, const char *__s, size_t __n);
+int mbtowc(wchar_t *__restrict __pwc, const char *__restrict __s, size_t __n);
 int wctomb(char *__s, wchar_t __wchar);
-size_t mbstowcs(wchar_t *__pwcs, const char *__s, size_t __n);
-size_t wcstombs(char *__s, const wchar_t *__pwcs, size_t __n);
+size_t mbstowcs(wchar_t *__restrict __pwcs, const char *__restrict __s, size_t __n);
+size_t wcstombs(char *__restrict __s, const wchar_t *__restrict __pwcs, size_t __n);
 
 #ifdef __cplusplus
 };
