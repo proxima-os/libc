@@ -268,27 +268,28 @@ EXPORT char *strtok(char *restrict s1, const char *restrict s2) {
 EXPORT char *strerror(int errnum) {
     switch (errnum) {
     case 0: return "Success";
-    case EACCES: return "Access denied";
-    case EBADF: return "Bad file descriptor";
-    case EBUSY: return "Device or resource busy";
-    case EDOM: return "Numerical argument out of domain";
-    case EEXIST: return "Already exists";
-    case EFAULT: return "Invalid address";
-    case EINVAL: return "Invalid argument";
-    case EISDIR: return "Is a directory";
-    case ELOOP: return "Too many levels of symbolic links";
-    case EMFILE: return "Too many open files";
-    case ENAMETOOLONG: return "Filename too long";
-    case ENOENT: return "No such file or directory";
-    case ENOEXEC: return "Executable file format error";
-    case ENOSPC: return "Disk full";
-    case ENOSYS: return "Not implemented";
-    case ENOTDIR: return "Not a directory";
-    case ENOTEMPTY: return "Directory not empty";
-    case EOVERFLOW: return "Value too large for defined data type";
-    case ERANGE: return "Numerical result out of range";
-    case EXDEV: return "Invalid cross-device link";
-    default: errno = EINVAL; return "Unknown error";
+    case __EACCES: return "Access denied";
+    case __EBADF: return "Bad file descriptor";
+    case __EBUSY: return "Device or resource busy";
+    case __EDOM: return "Numerical argument out of domain";
+    case __EEXIST: return "Already exists";
+    case __EFAULT: return "Invalid address";
+    case __EILSEQ: return "Illegal byte sequence";
+    case __EINVAL: return "Invalid argument";
+    case __EISDIR: return "Is a directory";
+    case __ELOOP: return "Too many levels of symbolic links";
+    case __EMFILE: return "Too many open files";
+    case __ENAMETOOLONG: return "Filename too long";
+    case __ENOENT: return "No such file or directory";
+    case __ENOEXEC: return "Executable file format error";
+    case __ENOSPC: return "Disk full";
+    case __ENOSYS: return "Not implemented";
+    case __ENOTDIR: return "Not a directory";
+    case __ENOTEMPTY: return "Directory not empty";
+    case __EOVERFLOW: return "Value too large for defined data type";
+    case __ERANGE: return "Numerical result out of range";
+    case __EXDEV: return "Invalid cross-device link";
+    default: errno = __EINVAL; return "Unknown error";
     }
 }
 

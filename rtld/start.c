@@ -1,5 +1,5 @@
-#include "elf.h"
 #include "object.h"
+#include <elf.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>

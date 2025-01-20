@@ -1,7 +1,6 @@
 #include "object.h"
-#include "elf.h"
-#include "sys/auxv.h"
-#include <errno.h>
+#include <elf.h>
+#include <hydrogen/error.h>
 #include <hydrogen/fcntl.h>
 #include <hydrogen/memory.h>
 #include <hydrogen/vfs.h>
@@ -10,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/auxv.h>
 
 object_t exec_object;
 object_t rtld_object;
@@ -152,7 +152,7 @@ static int read_fully(int fd, void *buffer, size_t size, uint64_t position) {
     while (size > 0) {
         hydrogen_io_res_t res = hydrogen_pread(fd, buffer, size, position);
         if (res.error) return res.error;
-        if (!res.transferred) return EOVERFLOW;
+        if (!res.transferred) return ERR_OVERFLOW;
         buffer += res.transferred;
         size -= res.transferred;
         position += res.transferred;

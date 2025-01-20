@@ -12,7 +12,7 @@ static __sig_handler_t handlers[SIG_MAX - SIG_MIN + 1];
 
 EXPORT __sig_handler_t signal(int sig, __sig_handler_t func) {
     if (sig < SIG_MIN || sig > SIG_MAX || func == SIG_ERR) {
-        errno = EINVAL;
+        errno = ERR_INVALID_ARGUMENT;
         return SIG_ERR;
     }
 
@@ -21,7 +21,7 @@ EXPORT __sig_handler_t signal(int sig, __sig_handler_t func) {
 
 EXPORT int raise(int sig) {
     if (sig < SIG_MIN || sig > SIG_MAX) {
-        errno = EINVAL;
+        errno = ERR_INVALID_ARGUMENT;
         return 1;
     }
 

@@ -323,7 +323,7 @@ EXPORT int system(const char *string) {
 
     if (!string) return 0; // No shell available
 
-    errno = ENOSYS;
+    errno = ERR_NOT_IMPLEMENTED;
     return -1;
 }
 

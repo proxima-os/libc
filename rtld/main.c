@@ -1,7 +1,6 @@
-#include "elf.h"
 #include "object.h"
-#include "sys/auxv.h"
 #include <stdint.h>
+#include <sys/auxv.h>
 
 uintptr_t start_rsp;
 
