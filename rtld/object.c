@@ -201,7 +201,10 @@ static int find_object(const char *paths, const char *name, Elf64_Ehdr *hdr, boo
             fd = hydrogen_open(-1, name, nlen, DEP_OPEN_FLAGS, 0);
         }
 
-        if (fd >= 0 && verify_object(fd, hdr)) return fd;
+        if (fd >= 0) {
+            if (verify_object(fd, hdr)) return fd;
+            hydrogen_close(fd);
+        }
 
         if (!*end) return -1;
         paths = end + 1;
